@@ -34,7 +34,7 @@ server:
 
 ## hosts 파일 변경해서 도메인처럼 사용하기
 - 윈도우 기준
-- C:\Windows\System32\drivers\etc\host파일
+- C:\Windows\System32\drivers\etc\hosts파일
 - 127.0.0.1 -> 
 ```text
 127.0.0.1 localhost - 기존
