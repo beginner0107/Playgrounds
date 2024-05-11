@@ -27,6 +27,8 @@ func NewApp(cfg *config.Config) *App {
 	a := &App{cfg: cfg,
 		stop: make(chan struct{})}
 
+	a.network = network.NewNetwork(cfg, a.service, a.authenticator)
+
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, syscall.SIGINT)
 
@@ -48,5 +50,5 @@ func (a *App) exit() {
 }
 
 func (a *App) Run() {
-	// TODO Network 시작
+	a.network.Run()
 }
