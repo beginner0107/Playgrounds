@@ -17,21 +17,21 @@ const (
 )
 
 type header struct {
-	result int    `json:"result"`
-	data   string `json:"data"`
+	Status int    `json:"status"`
+	Data   string `json:"data"`
 }
 
 type response struct {
 	*header
-	result interface{} `json:"result"`
+	Result interface{} `json:"result"`
 }
 
 // Router에서 사용가능한 범용성있는 유틸 함수
 
 func res(c *gin.Context, code int, res interface{}, data ...string) {
 	c.JSON(code, &response{
-		header: &header{result: code, data: strings.Join(data, " ,")},
-		result: res,
+		header: &header{Status: code, Data: strings.Join(data, " ,")},
+		Result: res,
 	})
 }
 

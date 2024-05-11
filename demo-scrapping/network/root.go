@@ -25,6 +25,9 @@ func NewNetwork(cfg *config.Config,
 		authenticator: authenticator,
 		engin:         gin.New(),
 	}
+
+	newAdmin(n)
+
 	return n
 }
 
