@@ -12,10 +12,10 @@ type Config struct {
 	}
 
 	Authenticator struct {
-		Secret   string
-		Account  string
-		Issuer   string
-		FileName string
+		Secret    string
+		Account   string
+		Issuer    string
+		FieldName string
 	}
 
 	DB struct {
@@ -24,7 +24,7 @@ type Config struct {
 	}
 }
 
-func NewConfig(path string) (*Config, error) {
+func NewConfig(path string) *Config {
 	c := new(Config)
 
 	if f, err := os.Open(path); err != nil {
@@ -32,6 +32,6 @@ func NewConfig(path string) (*Config, error) {
 	} else if err = toml.NewDecoder(f).Decode(c); err != nil {
 		panic(err)
 	} else {
-		return c, nil
+		return c
 	}
 }

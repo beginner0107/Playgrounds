@@ -1,7 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"demo-scrapping/config"
+	"flag"
+	"fmt"
+)
+
+var pathFlag = flag.String("config", "./config.toml", "set toml path")
 
 func main() {
-	fmt.Print("Hello World")
+	flag.Parse()
+
+	c := config.NewConfig(*pathFlag)
+	fmt.Println(c)
 }
