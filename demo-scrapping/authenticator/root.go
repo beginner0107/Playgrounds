@@ -3,6 +3,7 @@ package authenticator
 import (
 	"demo-scrapping/config"
 	"encoding/base32"
+	"github.com/dgryski/dgoogauth"
 	"net/url"
 	"os"
 
@@ -50,5 +51,17 @@ func NewAuthenticator(cfg *config.Config) (AuthenticatorImpl, error) {
 }
 
 func (a *authenticator) VerifySecret(secret string) (bool, error) {
-	return false, nil
+	opt := &dgoogauth.OTPConfig{
+		Secret:     a.secretBase32,
+		WindowSize: 1,
+	}
+
+	if valid, err := opt.Authenticate(secret); err != nil {
+		return false, err
+	} else if !valid {
+		return false, nil
+	} else {
+		return true, nil
+	}
+
 }
