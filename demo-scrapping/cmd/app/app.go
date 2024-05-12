@@ -31,6 +31,8 @@ func NewApp(cfg *config.Config) *App {
 
 	if a.authenticator, err = authenticator.NewAuthenticator(cfg); err != nil {
 		panic(err)
+	} else if a.repository, err = repository.NewRepository(cfg); err != nil {
+		panic(err)
 	}
 
 	a.network = network.NewNetwork(cfg, a.service, a.authenticator)
