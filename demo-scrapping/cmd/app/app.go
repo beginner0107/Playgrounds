@@ -35,6 +35,8 @@ func NewApp(cfg *config.Config) *App {
 		panic(err)
 	}
 
+	a.service = service.NewService(cfg, a.repository)
+
 	a.network = network.NewNetwork(cfg, a.service, a.authenticator)
 
 	channel := make(chan os.Signal, 1)
