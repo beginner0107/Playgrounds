@@ -27,6 +27,8 @@ func NewApp(cfg *config.Config) *App {
 	a := &App{cfg: cfg,
 		stop: make(chan struct{})}
 
+	a.authenticator = authenticator.NewAuthenticator(cfg)
+
 	a.network = network.NewNetwork(cfg, a.service, a.authenticator)
 
 	channel := make(chan os.Signal, 1)
