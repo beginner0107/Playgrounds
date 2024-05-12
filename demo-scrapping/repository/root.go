@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"demo-scrapping/config"
 	"demo-scrapping/types/schema"
+	_ "github.com/go-sql-driver/mysql"
 	"strings"
 )
 
@@ -39,7 +40,7 @@ func NewRepository(cfg *config.Config) (RepositoryImpl, error) {
 }
 
 func (r *repository) Add(url, cardSelector, innerSelector string, tag []string) error {
-	_, err := r.db.Exec("INSERT INTO Scrapping.Admin(url, tag, cardSelector, innerSelector VALUES(?, ?, ?, ?))",
+	_, err := r.db.Exec("INSERT INTO Scrapping.Admin(url, tag, cardSelector, innerSelector) VALUES(?, ?, ?, ?)",
 		url, strings.Join(tag, " "), cardSelector, innerSelector)
 	return err
 }
@@ -96,14 +97,14 @@ func (r *repository) ViewAll() ([]*schema.Admin, error) {
 	}
 }
 
-func (r *repository) Update(url, cardSelector, innerSelector string, tag []string) error {
-	q := query([]string{"UPDATE", admin, "SET tag = ? cardSelector = ? innerSelector = ? WHERE url = ?"})
+func (r *repository) Update(url, cardSelector string, innerSelector string, tag []string) error {
+	q := query([]string{"UPDATE", admin, "SET tag = ?, cardSelector = ?, innerSelector = ? WHERE url = ?"})
 	_, err := r.db.Exec(q, strings.Join(tag, " "), cardSelector, innerSelector, url)
 	return err
 }
 
 func (r *repository) Delete(url string) error {
-	q := query([]string{"DELETE", admin, "WHERE url = ?"})
+	q := query([]string{"DELETE FROM", admin, "WHERE url = ?"})
 	_, err := r.db.Exec(q, url)
 	return err
 }

@@ -15,12 +15,13 @@ func newAdmin(network *Network) {
 
 	basePath := "/admin"
 
-	network.register(basePath+"/add", POST, network.verifyAuth(), a.add)
+	// network.verifyAuth()
+	network.register(basePath+"/add", POST, a.add)
 	network.register(basePath+"/update", PUT, a.update)
 
 	network.register(basePath+"/delete", DELETE, a.delete)
-	network.register(basePath+"/view", GET, a.view)
-	network.register(basePath+"/view-all", GET, a.viewAll)
+	network.register(basePath+"/view", POST, a.view)
+	network.register(basePath+"/view-all", POST, a.viewAll)
 }
 
 func (a *admin) add(c *gin.Context) {
@@ -51,7 +52,7 @@ func (a *admin) update(c *gin.Context) {
 func (a *admin) view(c *gin.Context) {
 	var req types.ViewReq
 
-	if err := c.ShouldBindQuery(&req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		res(c, http.StatusUnprocessableEntity, nil, err.Error())
 	} else if response, err := a.network.service.View(req.URL); err != nil {
 		res(c, http.StatusInternalServerError, nil, err.Error())
@@ -71,7 +72,7 @@ func (a *admin) viewAll(c *gin.Context) {
 func (a *admin) delete(c *gin.Context) {
 	var req types.DeleteReq
 
-	if err := c.ShouldBindQuery(&req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		res(c, http.StatusUnprocessableEntity, nil, err.Error())
 	} else if err := a.network.service.Delete(req.URL); err != nil {
 		res(c, http.StatusInternalServerError, nil, err.Error())

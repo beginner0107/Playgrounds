@@ -9,4 +9,4 @@ fieldName = "qr.PNG"
 
 [db]
 database = "mysql"
-url = "root:root@tcp(localhost:3306)/Scrapping?multiStatements=true&parseTime=true"
+url = "root:@tcp(localhost:3306)/Scrapping?multiStatements=true&parseTime=true"

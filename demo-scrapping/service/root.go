@@ -21,7 +21,7 @@ type ServiceImpl interface {
 }
 
 func NewService(cfg *config.Config, repository repository.RepositoryImpl) ServiceImpl {
-	s := &service{}
+	s := &service{cfg: cfg, repository: repository}
 	return s
 }
 
