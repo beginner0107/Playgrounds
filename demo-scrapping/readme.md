@@ -23,3 +23,21 @@ temperature = 25.5   // temperature 변수에 값 할당
 // 또는
 height := 180        // int 타입의 height 변수를 선언하고 값 할당 (타입 추론)
 ```
+
+- RDB (MySQL)
+```mysql
+CREATE database IF NOT Exists Scrapping;
+-- CREATE database Scrapping
+Use Scrapping;
+
+Create Table Admin (
+   `id` int primary key auto_increment,
+   `url` varchar(255),
+   `cardSelector` varchar(255),
+   `innerSelector` varchar(255),
+   `tag` varchar(255),
+   `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP,
+   `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+```
