@@ -56,9 +56,9 @@ func (j *cronJob) scrapping() error {
 		return errors.New("all Result zero")
 	} else {
 		for _, r := range allResult {
-			log.Println("Try Scrapping URL : %s", r.URL)
-			log.Println("Try Scrapping CardSelect : %s", r.CardSelector)
-			log.Println("Try Scrapping Tag : %s", r.Tag)
+			log.Printf("Try Scrapping URL : %s\n", r.URL)
+			log.Printf("Try Scrapping CardSelect : %s\n", r.CardSelector)
+			log.Printf("Try Scrapping Tag : %s\n", r.Tag)
 
 			fmt.Println()
 			j.scrappingHTML(r.URL, r.CardSelector, r.InnerSelector, strings.Split(r.Tag, " "))
@@ -82,10 +82,23 @@ func (j *cronJob) scrappingHTML(url, cardSelector, innerSelect string, tag []str
 			if doc, err := goquery.NewDocumentFromReader(response.Body); err != nil {
 				log.Println("Failed To Read response", "err", err)
 			} else {
-				fmt.Println(doc.Html())
-			}
+				searchCard := doc.Find(cardSelector)
+				fmt.Println(searchCard)
 
-			fmt.Print(response.Body)
+				if searchCard.Length() == 0 {
+					log.Println("Failed To Search CardSelector")
+				} else {
+					searchCard.Each(func(i int, card *goquery.Selection) {
+						fmt.Println(innerSelect)
+						card.Find(innerSelect).Each(func(_ int, child *goquery.Selection) {
+							for _, t := range tag {
+								d := child.Find(t).Text()
+								log.Println(d)
+							}
+						})
+					})
+				}
+			}
 		}
 	}
 }

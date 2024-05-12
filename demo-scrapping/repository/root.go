@@ -97,7 +97,7 @@ func (r *repository) ViewAll() ([]*schema.Admin, error) {
 	}
 }
 
-func (r *repository) Update(url, cardSelector string, innerSelector string, tag []string) error {
+func (r *repository) Update(url, cardSelector, innerSelector string, tag []string) error {
 	q := query([]string{"UPDATE", admin, "SET tag = ?, cardSelector = ?, innerSelector = ? WHERE url = ?"})
 	_, err := r.db.Exec(q, strings.Join(tag, " "), cardSelector, innerSelector, url)
 	return err
