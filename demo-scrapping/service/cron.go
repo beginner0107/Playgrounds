@@ -3,7 +3,9 @@ package service
 import (
 	"demo-scrapping/config"
 	"demo-scrapping/repository"
+	"errors"
 	"fmt"
+	"log"
 
 	"github.com/robfig/cron"
 )
@@ -29,13 +31,31 @@ func NewCronJob(cfg *config.Config, repository repository.RepositoryImpl) *cronJ
 
 func (j *cronJob) runJobs() {
 	c := j.c
-	//db := j.repository
+	db := j.repository
 
 	c.AddFunc("*/5 * * * * *", func() {
-		fmt.Println("5초 주기로 작동합니다.")
+		scrapping(db)
+		fmt.Println()
 	})
 	c.Start()
 	defer c.Stop()
 
 	select {}
+}
+
+func scrapping(db repository.RepositoryImpl) error {
+	log.Println("five second job executed from mysql for Scrapping")
+
+	if allResult, err := db.ViewAll(); err != nil {
+		return err
+	} else if len(allResult) == 0 {
+		return errors.New("all Result zero")
+	} else {
+		for _, r := range allResult {
+			log.Println("Try Scrapping URL : %s", r.URL)
+			log.Println("Try Scrapping CardSelect : %s", r.CardSelector)
+			log.Println("Try Scrapping Tag : %s", r.Tag)
+		}
+		return nil
+	}
 }
