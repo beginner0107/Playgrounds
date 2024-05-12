@@ -5,6 +5,7 @@ go 1.22.3
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/naoina/toml v0.1.1
+	rsc.io/qr v0.2.0
 )
 
 require (
