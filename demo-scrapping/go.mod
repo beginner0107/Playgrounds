@@ -7,6 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/naoina/toml v0.1.1
+	github.com/robfig/cron v1.2.0
 	rsc.io/qr v0.2.0
 )
 

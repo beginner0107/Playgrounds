@@ -10,6 +10,8 @@ import (
 type service struct {
 	cfg        *config.Config
 	repository repository.RepositoryImpl
+
+	cronJob *cronJob
 }
 
 type ServiceImpl interface {
@@ -21,7 +23,11 @@ type ServiceImpl interface {
 }
 
 func NewService(cfg *config.Config, repository repository.RepositoryImpl) ServiceImpl {
-	s := &service{cfg: cfg, repository: repository}
+	s := &service{
+		cfg:        cfg,
+		repository: repository,
+		cronJob:    NewCronJob(cfg, repository),
+	}
 	return s
 }
 
