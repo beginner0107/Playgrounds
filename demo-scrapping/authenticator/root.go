@@ -15,7 +15,9 @@ type authenticator struct {
 	secretBase32 string
 }
 
-type AuthenticatorImpl interface{}
+type AuthenticatorImpl interface {
+	VerifySecret(secret string) (bool, error)
+}
 
 func NewAuthenticator(cfg *config.Config) (AuthenticatorImpl, error) {
 	a := &authenticator{cfg: cfg}
