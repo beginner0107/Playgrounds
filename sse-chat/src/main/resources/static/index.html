@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #chat-container {
+            width: 400px;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #chat {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 20px;
+            max-width: 70%;
+        }
+        .message.user {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+            text-align: right;
+        }
+        .message.other {
+            background-color: #ececec;
+            align-self: flex-start;
+            text-align: left;
+        }
+        #input-container {
+            display: flex;
+            border-top: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f4f4f9;
+        }
+        #message {
+            flex-grow: 1;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        #send-button {
+            border: none;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        #send-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div id="chat-container">
+    <div id="chat"></div>
+    <div id="input-container">
+        <input type="text" id="message" placeholder="Enter your message">
+        <button id="send-button" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    const username = encodeURIComponent(prompt("Enter your username:"));
+    const chatElement = document.getElementById("chat");
+    const messageElement = document.getElementById("message");
+    messageElement.focus();
+
+    if (typeof(EventSource) !== "undefined") {
+        const eventSource = new EventSource(`http://127.0.0.1:8080/chat/subscribe/${username}`);
+
+        eventSource.onopen = function(event) {
+            console.log("Connection opened", event);
+        };
+
+        eventSource.onerror = function(event) {
+            console.error("EventSource failed:", event);
+            alert("EventSource connection was closed. Please refresh the page.");
+        };
+
+        eventSource.addEventListener("chat", function(event) {
+            console.log("Chat event received:", event.data);
+            const messageData = decodeURIComponent(event.data);
+            const [sender, message] = messageData.split(": ", 2);
+            if (sender !== decodeURIComponent(username)) {
+                const newElement = document.createElement("div");
+                newElement.textContent = messageData;
+                newElement.className = 'message other';
+                chatElement.appendChild(newElement);
+                chatElement.scrollTop = chatElement.scrollHeight;
+            }
+        });
+
+        eventSource.addEventListener("message", function(event) {
+            console.log("Message event received:", event.data);
+            const messageData = decodeURIComponent(event.data);
+            const [sender, message] = messageData.split(": ", 2);
+            if (sender !== decodeURIComponent(username)) {
+                const newElement = document.createElement("div");
+                newElement.textContent = messageData;
+                newElement.className = 'message other';
+                chatElement.appendChild(newElement);
+                chatElement.scrollTop = chatElement.scrollHeight;
+            }
+        });
+    } else {
+        alert("Sorry, your browser does not support server-sent events...");
+    }
+
+    messageElement.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+            event.preventDefault();
+        }
+    });
+
+    function sendMessage() {
+        const message = messageElement.value;
+        if (message) {
+            fetch(`http://127.0.0.1:8080/chat/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `username=${username}&message=${encodeURIComponent(message)}`
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Message sent:", message);
+                    const newElement = document.createElement("div");
+                    newElement.textContent = `${decodeURIComponent(username)}: ${message}`;
+                    newElement.className = 'message user';
+                    chatElement.appendChild(newElement);
+                    chatElement.scrollTop = chatElement.scrollHeight;
+                } else {
+                    console.error('Message sending failed.');
+                }
+            }).catch(error => {
+                console.error('Message sending error:', error);
+            });
+            messageElement.value = '';
+        }
+    }
+</script>
+
+</body>
+</html>
